@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/app_state.dart';
+import 'settings_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -30,6 +31,21 @@ class ProfileScreen extends StatelessWidget {
               _buildProfileInfo('${profile.workoutsPerWeek} days/week', Icons.calendar_today, 'Frequency'),
               _buildEquipmentSection(profile.equipment),
               const SizedBox(height: 24),
+              _buildActionButton(
+                context,
+                'AI Settings',
+                Icons.settings_suggest,
+                Colors.purple,
+                () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const SettingsScreen(),
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(height: 12),
               _buildActionButton(
                 context,
                 'Reset Profile',

@@ -1,14 +1,40 @@
+import 'package:flutter/foundation.dart';
 import '../models/workout.dart';
 import '../models/exercise.dart';
 import '../models/user_profile.dart';
+import '../config/api_config.dart';
+import 'ai_service.dart';
 
 class WorkoutService {
-  // In a real app, this would call an AI API like OpenAI or Claude
-  // For now, we'll generate workouts based on user preferences using templates
+  final AiService _aiService = AiService();
 
+  /// Generate a workout using AI if API key is configured, otherwise use templates
   Future<Workout> generateWorkout(UserProfile profile) async {
+    // Try AI generation first if API key is available
+    if (ApiConfig.hasApiKey) {
+      try {
+        debugPrint('Generating workout with AI...');
+        final aiWorkout = await _aiService.generateWorkoutWithAi(profile);
+        if (aiWorkout != null) {
+          debugPrint('AI workout generated successfully');
+          return aiWorkout;
+        }
+      } catch (e) {
+        debugPrint('AI generation failed: $e');
+        debugPrint('Falling back to template-based generation');
+        // Fall through to template generation
+      }
+    }
+
+    // Fallback to template-based generation
+    debugPrint('Using template-based workout generation');
+    return _generateTemplateWorkout(profile);
+  }
+
+  /// Template-based workout generation (fallback)
+  Future<Workout> _generateTemplateWorkout(UserProfile profile) async {
     // Simulate API call delay
-    await Future.delayed(const Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 1));
 
     final exercises = _generateExercises(profile);
     final estimatedDuration = profile.availableTime;

@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/user_profile.dart';
 import '../models/workout.dart';
 import '../services/workout_service.dart';
+import '../config/api_config.dart';
 
 class AppState extends ChangeNotifier {
   UserProfile? _userProfile;
@@ -25,6 +26,12 @@ class AppState extends ChangeNotifier {
   Future<void> _loadFromStorage() async {
     try {
       final prefs = await SharedPreferences.getInstance();
+
+      // Load API keys
+      final openAiKey = prefs.getString('openai_api_key');
+      final anthropicKey = prefs.getString('anthropic_api_key');
+      if (openAiKey != null) ApiConfig.setOpenAiApiKey(openAiKey);
+      if (anthropicKey != null) ApiConfig.setAnthropicApiKey(anthropicKey);
 
       final profileJson = prefs.getString('userProfile');
       if (profileJson != null) {
